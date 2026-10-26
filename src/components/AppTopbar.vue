@@ -57,7 +57,7 @@ onBeforeUnmount(() => {
           :aria-label="`返回首页 · ${SITE.name}`"
         >
           <img
-            src="/sysu-logo.png"
+            src="/sysu-logo-128.png"
             alt="中山大学校徽"
             width="46"
             height="46"

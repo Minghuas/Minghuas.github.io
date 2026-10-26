@@ -20,7 +20,7 @@ const hasContact = (v) => Boolean(v)
         <div class="lg:col-span-4">
           <div class="flex items-start gap-3">
             <img
-              src="/sysu-logo.png"
+              src="/sysu-logo-128.png"
               alt="中山大学校徽"
               width="44"
               height="44"

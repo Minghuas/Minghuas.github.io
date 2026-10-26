@@ -1,6 +1,21 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 /**
+ * 页面组件的懒加载入口。
+ * 首次访问某个页面时再下载对应 chunk；首屏完成后由 prefetchViews() 预取其余页面，
+ * 这样第一次点击导航也不会等网络。
+ */
+const VIEW_LOADERS = {
+  home: () => import('@/views/HomeView.vue'),
+  research: () => import('@/views/ResearchView.vue'),
+  achievements: () => import('@/views/AchievementsView.vue'),
+  publications: () => import('@/views/PublicationsView.vue'),
+  team: () => import('@/views/TeamView.vue'),
+  join: () => import('@/views/JoinUsView.vue'),
+  notFound: () => import('@/views/NotFoundView.vue'),
+}
+
+/**
  * 路由表。
  * meta.title / meta.description 由 App.vue 在导航后写入 document，
  * 保证每个页面都有独立的标题与描述。
@@ -10,7 +25,7 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: () => import('@/views/HomeView.vue'),
+    component: VIEW_LOADERS.home,
     meta: {
       match: 'home',
       title: '首页',
@@ -20,7 +35,7 @@ const routes = [
   {
     path: '/research',
     name: 'research',
-    component: () => import('@/views/ResearchView.vue'),
+    component: VIEW_LOADERS.research,
     meta: {
       match: 'research',
       title: '研究方向',
@@ -30,7 +45,7 @@ const routes = [
   {
     path: '/achievements',
     name: 'achievements',
-    component: () => import('@/views/AchievementsView.vue'),
+    component: VIEW_LOADERS.achievements,
     meta: {
       match: 'achievements',
       title: '科研成果',
@@ -40,7 +55,7 @@ const routes = [
   {
     path: '/publications',
     name: 'publications',
-    component: () => import('@/views/PublicationsView.vue'),
+    component: VIEW_LOADERS.publications,
     meta: {
       match: 'publications',
       title: '论文发表',
@@ -50,7 +65,7 @@ const routes = [
   {
     path: '/team',
     name: 'team',
-    component: () => import('@/views/TeamView.vue'),
+    component: VIEW_LOADERS.team,
     meta: {
       match: 'team',
       title: '团队成员',
@@ -60,7 +75,7 @@ const routes = [
   {
     path: '/join',
     name: 'join',
-    component: () => import('@/views/JoinUsView.vue'),
+    component: VIEW_LOADERS.join,
     meta: {
       match: 'join',
       title: '招生招聘',
@@ -70,7 +85,7 @@ const routes = [
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
-    component: () => import('@/views/NotFoundView.vue'),
+    component: VIEW_LOADERS.notFound,
     meta: {
       match: '',
       title: '页面不存在',
@@ -98,5 +113,34 @@ const router = createRouter({
     return false
   },
 })
+
+/**
+ * 首屏完成后预取其余页面组件。
+ *
+ * 背景：路由按页懒加载，第一次进入某个页面时要等对应 chunk 下载完才开始渲染，
+ * 在 GitHub Pages / 移动网络下会明显停顿。这里在浏览器空闲时把剩余页面的 chunk
+ * 下载好（总增量只有几十 KB），之后所有页面切换都是即时的。
+ *
+ * 省流量：开启 data-saver 或处于 2G 网络时跳过；单次执行，失败静默忽略。
+ */
+let prefetchStarted = false
+
+export function prefetchViews() {
+  if (prefetchStarted || typeof window === 'undefined') return
+  prefetchStarted = true
+
+  const connection = navigator.connection
+  if (connection?.saveData || /(^|-)2g$/.test(connection?.effectiveType ?? '')) return
+
+  const loadAll = () => {
+    for (const load of Object.values(VIEW_LOADERS)) load().catch(() => {})
+  }
+
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(loadAll, { timeout: 3000 })
+  } else {
+    window.setTimeout(loadAll, 1500)
+  }
+}
 
 export default router

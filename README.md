@@ -162,7 +162,9 @@ npm run preview
 │  ├─ content-audit.mjs  占位内容统计
 │  └─ spa-fallback.mjs   GitHub Pages 深链接回退（复制 404.html）
 ├─ public/
-│  ├─ sysu-logo.png      官方校徽（顶栏 / 页脚 / favicon / 首屏水印）
+│  ├─ sysu-logo-128.png  官方校徽（顶栏 / 页脚 / 首屏水印，31 KB）
+│  ├─ favicon-64.png     站点图标（64×64，8 KB）
+│  ├─ sysu-logo.png      校徽原图（229×229，备用）
 │  └─ fonts/             自托管字体（Open Sans / Titillium Web）
 └─ src/
    ├─ main.js            应用入口（挂载 v-reveal 指令）
@@ -276,8 +278,8 @@ npm run preview
 - **字体**：正文 Open Sans，标题与导航 Titillium Web，均自托管 woff2
   （`public/fonts/`，含拉丁字符；中文回退 PingFang SC / 思源黑体 / 微软雅黑），
   编号与代码用等宽字体。
-- **校徽**：`public/sysu-logo.png`（官方校徽）用于顶部栏、页脚、favicon，
-  并作为首屏的低透明度水印。
+- **校徽**：`public/sysu-logo-128.png` 用于顶部栏、页脚与首屏水印，
+  `public/favicon-64.png` 用于 favicon；原图保留在 `public/sysu-logo.png`。
 - **节奏**：大留白、明确网格、清晰标题层级；页面纵向深度充足，
   大块展示与紧凑列表交替，避免通篇同一节奏。
 - **动效**：滚动渐入、导航状态切换、卡片悬停、页面淡入，全部轻量；
@@ -295,6 +297,18 @@ npm run preview
 - 图片加载：声明 `width` / `height` 并使用 `loading="lazy"`；
   图片加载失败时文字内容仍完整可读。
 
+### 加载与切页性能
+
+- **首屏**：`index.html` 内联了一个极简加载提示（校色圆环 + 「正在加载…」），
+  延迟 200ms 才淡入，快网络下不会闪现；Vue 挂载时随 `#app` 清空自动移除。
+- **路由预取**：页面组件按路由懒加载，首屏就绪后由 `prefetchViews()`
+  在 `requestIdleCallback` 空闲时预取其余页面的 chunk（合计几十 KB），
+  之后第一次点击任何导航都不再等下载。开启 data-saver 或 2G 网络时自动跳过。
+- **切页过渡**：`out-in` 淡入淡出每段 150ms，整次切换约 300ms；
+  `prefers-reduced-motion` 下完全关闭。
+- **图片**：校徽从 96KB 压到 31KB，favicon 单独压到 9KB；
+  字体 `font-display: swap` 并预加载首屏所需的两个字重。
+
 ---
 
 ## 版本记录
@@ -309,7 +323,7 @@ npm run preview
 v3 的视觉令牌集中定义在 [src/style.css](src/style.css) 的 `@theme` 中；
 校色的大面积使用（顶栏、首屏、页脚等）分布在 `AppTopbar.vue`、`HomeView.vue`、
 `JoinUsView.vue`、`AppSidebar.vue`、`AppFooter.vue` 与 `PageHero.vue`。
-字体与校徽文件位于 `public/fonts/` 与 `public/sysu-logo.png`，离线可用。
+字体与校徽文件位于 `public/fonts/` 与 `public/*.png`，离线可用。
 
 备份目录是可直接运行的完整副本（不含 `node_modules` 与 `dist`），
 需要回到 v1 时把 `src/`、`index.html`、`vite.config.js` 等文件覆盖回来即可。

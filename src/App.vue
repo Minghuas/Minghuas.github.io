@@ -95,18 +95,19 @@ onMounted(applyHead)
 </template>
 
 <style scoped>
-/* 页面切换：轻量的淡入 + 微位移，不做花哨转场 */
+/* 页面切换：轻量的淡入 + 微位移，不做花哨转场。
+   采用 out-in 模式，离场与入场各 150ms，整次切页约 300ms。 */
 .page-enter-active,
 .page-leave-active {
-  transition: opacity 0.24s ease, transform 0.24s ease;
+  transition: opacity 0.15s ease, transform 0.15s ease;
 }
 .page-enter-from {
   opacity: 0;
-  transform: translateY(8px);
+  transform: translateY(6px);
 }
 .page-leave-to {
   opacity: 0;
-  transform: translateY(-4px);
+  transform: translateY(-3px);
 }
 @media (prefers-reduced-motion: reduce) {
   .page-enter-active,

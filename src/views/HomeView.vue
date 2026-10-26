@@ -58,7 +58,7 @@ const padIndex = (i) => String(i + 1).padStart(2, '0')
 
       <!-- 校徽水印：以极低透明度作为首屏的机构印记 -->
       <img
-        src="/sysu-logo.png"
+        src="/sysu-logo-128.png"
         alt=""
         width="320"
         height="320"
