@@ -1,0 +1,421 @@
+@import 'tailwindcss';
+
+/* =========================================================================
+   字体：自托管，避免外部请求阻塞首屏
+   —— 标题 Titillium Web，正文 Open Sans（参考中山大学课程站点的字体体系）
+   ========================================================================= */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url('/fonts/open-sans-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/titillium-web-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/titillium-web-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Titillium Web';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/titillium-web-400-italic.woff2') format('woff2');
+}
+
+/* =========================================================================
+   设计令牌 Design Tokens
+   基调取自中山大学课程站点：深蓝页首 + 橙色饰条 + 紫色标题 + 蓝色链接
+   中性面仍保持克制，用白 / 浅灰蓝构成清晰的信息层级
+   ========================================================================= */
+@theme {
+  /* ---- 文字色：参考站点使用的近黑 / 中灰体系 ---- */
+  --color-ink-900: #111111;
+  --color-ink-800: #1f1f1f;
+  --color-ink-700: #333333;
+  --color-ink-600: #555555;
+  --color-ink-500: #666666;
+  --color-ink-400: #828282;
+  --color-ink-300: #a8a8a8;
+  --color-ink-200: #cccccc;
+
+  /* ---- 深蓝：页首、首屏、页脚与强调区块（#336699） ---- */
+  --color-navy-950: #1b3a57;
+  --color-navy-900: #336699;
+  --color-navy-800: #2b5a86;
+  --color-navy-700: #234e75;
+  --color-navy-600: #1c4163;
+
+  /* ---- 紫色：页面主标题与导航选中态（#522d80） ---- */
+  --color-plum-800: #3e1f63;
+  --color-plum-700: #522d80;
+  --color-plum-600: #6a3f9e;
+  --color-plum-200: #d9c9ea;
+  --color-plum-100: #efe8f7;
+  --color-plum-50: #f7f3fb;
+
+  /* ---- 强调蓝：正文链接、可点击元素（#07c） ---- */
+  --color-accent-50: #eaf4fc;
+  --color-accent-100: #d6e9f8;
+  --color-accent-200: #b3d6f0;
+  --color-accent-300: #7db8e3;
+  --color-accent-400: #3d97d6;
+  --color-accent-500: #0077cc;
+  --color-accent-600: #0066b3;
+  --color-accent-700: #00558f;
+  --color-accent-800: #004471;
+
+  /* ---- 橙色：页首 6px 饰条、选中态色条与主要行动入口（#f66733） ---- */
+  --color-orange-50: #fdf1ec;
+  --color-orange-100: #fce3d9;
+  --color-orange-200: #f9c5b0;
+  --color-orange-300: #f79a77;
+  --color-orange-400: #f47b50;
+  --color-orange-500: #f66733;
+  --color-orange-600: #d94f1c;
+  --color-orange-700: #b8431c;
+
+  /* ---- 中性面：白 / 浅灰蓝（参考站点 #fdfdfd 与 #f0f4f8） ---- */
+  --color-paper: #fdfdfd;
+  --color-mist: #f0f4f8;
+  --color-mist-deep: #e4ebf2;
+
+  /* ---- 分割线：参考站点的细灰线 ---- */
+  --color-line: #e8e8e8;
+  --color-line-soft: #f0f0f0;
+  --color-line-cool: #d8e3ec;
+
+  /* ---- 提示用金：沿用参考站点公告框的暖黄体系 ---- */
+  --color-gold-700: #8a6d3b;
+  --color-gold-600: #a57c24;
+  --color-gold-100: #fcf8e3;
+
+  --color-crimson-700: #b00000;
+  --color-crimson-100: #fbeaea;
+
+  /* ---- 字体 ---- */
+  --font-sans:
+    'Open Sans', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC',
+    Helvetica, Arial, sans-serif;
+  --font-display:
+    'Titillium Web', 'Open Sans', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+    'Noto Sans SC', sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+
+  /* ---- 圆角：接近直角，学术网站的克制感 ---- */
+  --radius-hair: 2px;
+  --radius-card: 4px;
+
+  /* ---- 阴影：非常轻，几乎只用于悬停时的浮起 ---- */
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px -18px rgb(0 0 0 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.05), 0 16px 36px -22px rgb(0 0 0 / 0.2);
+}
+
+/* =========================================================================
+   基础层
+   ========================================================================= */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /*
+     * 吸顶顶部栏（h-14 / sm:h-16）的高度补偿，保证锚点跳转不被顶部栏遮挡。
+     * 目标元素若另有 scroll-mt-*，两者会叠加，需一并计算：
+     * 例：研究方向页锚点 = 4.5rem（此处）+ 3rem（scroll-mt-12）≈ 顶部栏 + 页内锚点条。
+     */
+    scroll-padding-top: 4.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink-800);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* 防止任何子元素导致的横向滚动 */
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-ink-900);
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.25;
+    /* 中文长标题更均衡的换行 */
+    text-wrap: balance;
+  }
+
+  /* 主标题使用参考站点的紫色，形成全站最强的品牌识别 */
+  h1 {
+    color: var(--color-plum-700);
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    letter-spacing: -0.01em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* 行内代码：沿用参考站点的浅蓝底 + 细边框 */
+  code {
+    padding: 0.05em 0.35em;
+    border: 1px solid var(--color-line);
+    border-radius: 3px;
+    background-color: #eeeeff;
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+  }
+
+  /* 无障碍：清晰的键盘焦点样式（橙色与页首饰条呼应） */
+  :focus-visible {
+    outline: 3px solid var(--color-orange-500);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-orange-100);
+    color: var(--color-plum-800);
+  }
+
+  /* 中文正文中的英文与数字使用等宽感的表格数字 */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* =========================================================================
+   结构辅助类
+   ========================================================================= */
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: 84rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 40rem) {
+    .container-page {
+      padding-inline: 2rem;
+    }
+  }
+  @media (min-width: 64rem) {
+    .container-page {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  /*
+   * 「左侧栏 + 右内容栏」版式下的容器修正。
+   *
+   * 页面栅格由 .layout-with-sidebar 这一层统一决定（侧栏宽度 + 内容栏留白），
+   * 因此内容栏内部的 .container-page 不再承担居中与最大宽度，
+   * 只保留内边距 —— 这样各分区的底色与分隔线仍能横贯整个内容栏，
+   * 同时不必逐个修改页面里的 container-page 用法。
+   */
+  .layout-with-sidebar .container-page {
+    max-width: none;
+    margin-inline: 0;
+  }
+
+  /*
+   * 超宽屏（左侧栏贴视口左缘后，内容栏会随屏幕一起变宽）再加一档留白，
+   * 避免正文字面宽度无限拉伸。分档而不是设 max-width，
+   * 是为了让各分区的底色与分隔线始终保持通栏，不出现色块突然截断的边。
+   */
+  @media (min-width: 100rem) {
+    .layout-with-sidebar .container-page {
+      padding-inline: 4rem;
+    }
+  }
+  @media (min-width: 120rem) {
+    .layout-with-sidebar .container-page {
+      padding-inline: 5rem;
+    }
+  }
+
+  /* 阅读型窄栏：用于长文段落，控制每行字数 */
+  .measure {
+    max-width: 68ch;
+  }
+  .measure-tight {
+    max-width: 54ch;
+  }
+
+  /* 小标签 / 眉题：参考站点的 Titillium 大写标签 */
+  .eyebrow {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-plum-700);
+  }
+
+  /* 极细的顶部装饰线 */
+  .rule-top {
+    border-top: 1px solid var(--color-line);
+  }
+
+  /* 链接：正文内联链接，带下划线偏移；悬停时转为近黑，与参考站点一致 */
+  .link-inline {
+    color: var(--color-accent-500);
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent-300);
+    text-underline-offset: 0.2em;
+    transition: text-decoration-color 0.18s ease, color 0.18s ease;
+  }
+  .link-inline:hover {
+    color: var(--color-ink-900);
+    text-decoration-color: currentColor;
+  }
+
+  /* 论文标题链接 */
+  .pub-title-link {
+    color: var(--color-ink-900);
+    transition: color 0.18s ease;
+  }
+  .pub-title-link:hover {
+    color: var(--color-accent-500);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+}
+
+/* =========================================================================
+   占位内容样式
+   —— 框架阶段：所有「实际内容」以可见标记呈现，方便逐块替换。
+      替换真实内容后，这些样式自然不再生效，无需删除。
+   ========================================================================= */
+@layer components {
+  /* 行内占位标记 */
+  .tbd {
+    display: inline;
+    padding: 0 0.25em;
+    border-bottom: 1px dashed var(--color-gold-600);
+    border-radius: 2px;
+    background-color: var(--color-gold-100);
+    color: var(--color-gold-700);
+    font-size: 0.93em;
+    font-style: normal;
+    line-height: 1.5;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  /* 块级占位：用于整段缺失的说明文字 */
+  .tbd-block {
+    display: block;
+    padding: 0.5rem 0.7rem;
+    border: 1px dashed var(--color-gold-600);
+    border-radius: var(--radius-hair);
+    background-color: var(--color-gold-100);
+    color: var(--color-gold-700);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    font-style: normal;
+  }
+
+  /* 空列表占位区：虚线框 + 替换指引 */
+  .tbd-panel {
+    border: 1px dashed var(--color-line);
+    border-radius: var(--radius-card);
+    background-color: var(--color-mist);
+    padding: 1.25rem 1.25rem;
+  }
+  @media (min-width: 48rem) {
+    .tbd-panel {
+      padding: 1.5rem 1.75rem;
+    }
+  }
+
+  /* 数据统计的占位数字 */
+  .tbd-figure {
+    font-family: var(--font-mono);
+    font-size: clamp(1.1rem, 1rem + 0.6vw, 1.5rem);
+    color: var(--color-gold-700);
+    letter-spacing: 0.02em;
+  }
+}
+
+/* =========================================================================
+   滚动渐入动效
+   —— 轻量、可关闭。JS 加载前不隐藏内容，保证降级可用。
+   ========================================================================= */
+@layer utilities {
+  html.js-reveal [data-reveal] {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+      transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+  html.js-reveal [data-reveal='in'] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* 数据流动效：仅在允许动效时启用 */
+  .flow-dash {
+    stroke-dasharray: 5 7;
+    animation: flow 2.6s linear infinite;
+  }
+  @keyframes flow {
+    to {
+      stroke-dashoffset: -24;
+    }
+  }
+}
+
+/* =========================================================================
+   尊重系统的「减少动态效果」设置
+   ========================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  html.js-reveal [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* 打印：去掉导航与装饰，保留正文 */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    color: #000;
+  }
+}

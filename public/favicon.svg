@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="SAIL">
+  <rect width="64" height="64" rx="12" fill="#0a1c33" />
+  <!-- 芯片基座 -->
+  <rect x="18" y="14" width="28" height="24" rx="3" fill="none" stroke="#6f9fd0" stroke-width="2.5" />
+  <!-- 内核分区 -->
+  <rect x="23" y="19" width="8" height="6" rx="1" fill="#6f9fd0" />
+  <rect x="34" y="19" width="8" height="6" rx="1" fill="#2f6fb5" />
+  <rect x="23" y="28" width="19" height="6" rx="1" fill="#2f6fb5" />
+  <!-- 引脚 -->
+  <g stroke="#6f9fd0" stroke-width="2.5" stroke-linecap="round">
+    <path d="M24 14V9M32 14V9M40 14V9" />
+    <path d="M24 38v5M32 38v5M40 38v5" />
+    <path d="M18 20h-5M18 27h-5M46 20h5M46 27h5" />
+  </g>
+  <!-- 数据流 -->
+  <g stroke="#2f6fb5" stroke-width="2.5" stroke-linecap="round">
+    <path d="M20 48h24" />
+    <path d="M20 53h14" />
+  </g>
+</svg>
